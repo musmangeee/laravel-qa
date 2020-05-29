@@ -6,6 +6,7 @@ use App\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
 use Hash;
+use Auth;
 use Mail;
 
 class UserController extends Controller
@@ -22,6 +23,10 @@ class UserController extends Controller
             $message->subject('Activate your account');
             $message->to($reciepent);
         });
+    }
+    public function getUserData($id)
+    {
+        return User::find($id);
     }
 
     /**
@@ -76,9 +81,33 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function activateAccount(UserRequest $request)
     {
-        //
+        $input = $request->all();
+		 $userDetails = $this->getUserData($input['user_id']);
+		if ($userDetails) {
+			if ($userDetails->is_active == \Config::get('constants.user.user_not_active')) {
+				if ($input['code'] == $userDetails->activation_code) {
+					$userDetails->is_active = \Config::get('constants.user.user_active');
+                    $userDetails->save();
+                    // Auth::attempt(['email' => $userDetails->email, 'password' => $userDetails->password]);
+                    $userDetails->token = $userDetails->createToken($userDetails->user_name)->accessToken;
+					$ResponseCode = \Config::get('constants.response.ResponseCode_success');
+					$ResponseMessage = __('users.account_activated');
+				} else {
+					$ResponseCode = \Config::get('constants.response.ResponseCode_wrong_activationCode');
+					$ResponseMessage = __('users.enter_valid_code');
+				}
+			} else {
+				$ResponseCode = \Config::get('constants.response.ResponseCode_fail');
+				$ResponseMessage = __('users.already_active');
+			}
+		} else {
+			$ResponseCode = \Config::get('constants.response.ResponseCode_no_content');
+			$ResponseMessage = __('users.no_user_found');
+			$userDetails = new \stdClass();
+		}
+		return responseMsg($ResponseCode, $ResponseMessage, $userDetails);
     }
 
     /**
@@ -87,9 +116,36 @@ class UserController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function userSignin(UserRequest $request)
     {
-        //
+        $input = $request->all();
+		$credentials = $request->only('email', 'password');
+		$userDetails = User::where('email',$input['email'])->first();
+
+		if ($userDetails && $userDetails->role == \Config::get('constants.roles.user')) {
+			if (!Hash::check($input['password'], $userDetails->password)) {
+				$ResponseCode = \Config::get('constants.response.ResponseCode_not_authenticated');
+				$ResponseMessage = __('users.login_none');
+				$userDetails = new \stdClass();
+			}
+			if ($userDetails->is_active == \Config::get('constants.user.user_not_active')) {
+				$ResponseCode = \Config::get('constants.response.ResponseCode_account_not_activated');
+				$ResponseMessage = __('users.account_not_found_phone');
+			}
+			if (Auth::attempt($credentials)) {			
+				$authUser = Auth()->user();
+				$UserToken = $authUser->createToken($authUser->full_name)->accessToken;
+                $userDetails->save();
+                $userDetails->token = $UserToken;
+				$ResponseCode = \Config::get('constants.response.ResponseCode_success');
+				$ResponseMessage = __('users.login_success');
+			}
+		} else {
+			$ResponseCode = \Config::get('constants.response.ResponseCode_not_found');
+            $ResponseMessage = __('users.nouserfound');
+            $userDetails = new \stdClass();
+        }
+        return responseMsg($ResponseCode, $ResponseMessage, $userDetails);
     }
 
     /**
@@ -98,8 +154,10 @@ class UserController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
+    public function ainvyi()
     {
+        $ad = Auth::id();
+        return $ad;
         //
     }
 

@@ -39,28 +39,22 @@ class UserRequest extends FormRequest
 						'max:12',             // must be at least 8 characters in length
 					],
 				];			
-		}
-	// if($request->path()=='api/signup'){
-	// 	$rules = [
-	// 		'phone' => 'required|min:10',
-	// 		'password' => 'required'
-	// 	];
-	// }
+			}
+	if($request->path()=='api/activate_account'){
+		$rules = [
+			'code' => 'required|min:6',
+			'user_id' => 'required'
+		];
+	}
 	if($request->path()=='api/signin'){
 		$rules = [
-			'phone' => 'required|min:10',
+			'email' => 'required|email',
 			'password' => 'required'
 		];
 	}
 	if($request->path()=='api/resend_code'){
 		$rules = [
 			'user_id' => 'required',
-		];
-	}
-	if($request->path()=='api/user_activate'){
-		$rules = [
-			'code' => 'required|min:6',
-			'user_id' => 'required'
 		];
 	}
 	if($request->path()=='api/change_password'){

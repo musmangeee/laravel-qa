@@ -13,13 +13,19 @@ use Illuminate\Http\Request;
 |
 */
 Route::post('signup','UserController@userSignup');
-
+Route::post('activate_account','UserController@activateAccount');
+Route::post('signin','UserController@userSignin');
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('login','AuthController@authenticate');
     Route::post('register','AuthController@authenticate');
     Route::get('logout','AuthController@logout');
     Route::get('check','AuthController@check');
+});
+Route::group(['middleware' => 'auth:api'], function () {
+    
+    Route::get('ainvyi','UserController@ainvyi');
+
 });
 
 // session route

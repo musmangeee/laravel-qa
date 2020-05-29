@@ -18,8 +18,9 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('password')->nullable();
             $table->tinyInteger('role')->default(3);
-            $table->tinyInteger('is_activate')->default(0);
+            $table->tinyInteger('is_active')->default(0);
             $table->integer('activation_code')->nullable();
+            $table->char('player_id',255)->nullable();
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();
