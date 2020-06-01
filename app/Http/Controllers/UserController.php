@@ -28,7 +28,10 @@ class UserController extends Controller
     {
         return User::find($id);
     }
-
+    public function getUserByEmail($email)
+    {
+        return User::where('email', $email)->first();
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -39,9 +42,9 @@ class UserController extends Controller
         //
         $input = $request->all();
         $password = Hash::make($input['password']);
-        $activation_code = mt_rand(100000, 999999);
-        // $activation_code = 123321;
-        $userExist = User::where('email', $input['email'])->first();
+        // $activation_code = mt_rand(100000, 999999);
+        $activation_code = 123321;
+        $userExist = $this->getUserByEmail($input['email']);
         $textbody = 'Hello '.$input['user_name'].' !
         Your activation code is '.$activation_code;
         if ($userExist) {
@@ -50,7 +53,7 @@ class UserController extends Controller
                  User::where('id',$userExist->id)->update([
                     'activation_code' => $activation_code
                  ]);
-                 $this->sendActivationCode($textbody,$input['email']);
+                //  $this->sendActivationCode($textbody,$input['email']);
                  $code = \Config::get('constants.response.ResponseCode_account_not_activated');
                  $message = 'account_already_exist_but_not_active';
                  $User = $userExist;
@@ -68,7 +71,7 @@ class UserController extends Controller
                 'password' => $password,
                 'activation_code' => $activation_code
             ]);
-            $this->sendActivationCode($textbody , $input['email']);
+            // $this->sendActivationCode($textbody , $input['email']);
             $code = \Config::get('constants.response.ResponseCode_created');
             $message = 'register_success';
         }
@@ -119,18 +122,17 @@ class UserController extends Controller
     public function userSignin(UserRequest $request)
     {
         $input = $request->all();
-		$credentials = $request->only('email', 'password');
-		$userDetails = User::where('email',$input['email'])->first();
-
+        $credentials = $request->only('email', 'password');
+        $userDetails = $this->getUserByEmail($input['email']);
 		if ($userDetails && $userDetails->role == \Config::get('constants.roles.user')) {
+            if ($userDetails->is_active == \Config::get('constants.user.user_not_active')) {
+				$ResponseCode = \Config::get('constants.response.ResponseCode_account_not_activated');
+				$ResponseMessage = __('users.account_not_found_email');
+			}
 			if (!Hash::check($input['password'], $userDetails->password)) {
 				$ResponseCode = \Config::get('constants.response.ResponseCode_not_authenticated');
-				$ResponseMessage = __('users.login_none');
-				$userDetails = new \stdClass();
-			}
-			if ($userDetails->is_active == \Config::get('constants.user.user_not_active')) {
-				$ResponseCode = \Config::get('constants.response.ResponseCode_account_not_activated');
-				$ResponseMessage = __('users.account_not_found_phone');
+				$ResponseMessage = __('users.password_incorrect');
+				// $userDetails = new \stdClass();
 			}
 			if (Auth::attempt($credentials)) {			
 				$authUser = Auth()->user();
@@ -147,6 +149,33 @@ class UserController extends Controller
         }
         return responseMsg($ResponseCode, $ResponseMessage, $userDetails);
     }
+
+    public function forgotPassword(UserRequest $request)
+	{
+		$input = $request->all();
+        $userDetails = $this->getUserByEmail($input['email']);
+		if ($userDetails) {
+            $password_string = '!@#$%*&abcdefghijklmnpqrstuwxyzABCDEFGHJKLMNPQRSTUWXYZ23456789';
+            // $setPassword = substr(str_shuffle($password_string), 0, 8);
+            $setPassword = 123321;
+            $password = Hash::make($setPassword);
+			$textbody = 'Hello '.$userDetails['user_name'].' !
+            Your new Password is '.$setPassword;
+            //  $this->sendActivationCode($textbody,$userDetails['email']);
+            $userDetails->password = $password;
+			$userDetails->save();
+
+			$ResponseCode = \Config::get('constants.response.ResponseCode_success');
+			$ResponseMessage = __('users.password_reset');
+		} 
+		else
+		{
+			$ResponseCode = \Config::get('constants.response.ResponseCode_not_found');
+			$ResponseMessage = __('users.account_not_found_phone');
+			$userDetails = new \stdClass();
+		}
+		return responseMsg($ResponseCode, $ResponseMessage, $userDetails);
+	}
 
     /**
      * Show the form for editing the specified resource.

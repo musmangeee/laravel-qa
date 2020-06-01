@@ -52,6 +52,11 @@ class UserRequest extends FormRequest
 			'password' => 'required'
 		];
 	}
+	if($request->path()=='api/forgot_password'){
+		$rules = [
+			'email' => 'required|email',
+		];
+	}
 	if($request->path()=='api/resend_code'){
 		$rules = [
 			'user_id' => 'required',
@@ -73,12 +78,6 @@ class UserRequest extends FormRequest
 			'email' => 'required|email',
 			'social_id' => 'required',
 			'social_access_token' => 'required'
-		];
-	}
-
-	if($request->path()=='api/forgot_password'){
-		$rules = [
-			'phone' => 'required|min:12|numeric',
 		];
 	}
 	if($request->path()=='api/reset_password'){

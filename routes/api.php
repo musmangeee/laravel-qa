@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 Route::post('signup','UserController@userSignup');
 Route::post('activate_account','UserController@activateAccount');
 Route::post('signin','UserController@userSignin');
+Route::post('forgot_password','UserController@forgotPassword');
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('login','AuthController@authenticate');

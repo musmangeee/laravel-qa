@@ -15,7 +15,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'shoaibt51@gmail.com',
             'user_name' => 'Shoaib Tariq',
             'role' => 1,
-            'is_activate' => 1,
+            'is_active' => 1,
             'password' => bcrypt(123456789)
         ]);
 
