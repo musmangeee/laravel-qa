@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\User;
 
-class UserRequest extends FormRequest
+class LotteryRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -28,17 +28,11 @@ class UserRequest extends FormRequest
 	{
 
 		$rules = [];
-		if($request->path()=='api/signup'){
+		if($request->path()=='api/book_lottery_numbers'){
 				$rules = [
-					'user_name' => 'required',
-					'email' => 'required|email',
-					'player_id' => 'required',
-					'password' => [
-						'required',
-						'string',
-						// 'min:8',
-						// 'max:12',             // must be at least 8 characters in length
-					],
+					'lottery_numbers' => 'required|array',
+					'transaction_id' => 'required',
+					'total_amount' => 'required',
 				];			
 			}
 	if($request->path()=='api/activate_account'){

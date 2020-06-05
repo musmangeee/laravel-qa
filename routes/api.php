@@ -16,6 +16,7 @@ Route::post('signup','UserController@userSignup');
 Route::post('activate_account','UserController@activateAccount');
 Route::post('signin','UserController@userSignin');
 Route::post('forgot_password','UserController@forgotPassword');
+Route::get('lottery_price','LotteryPriceController@lotteryPrice');
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('login','AuthController@authenticate');
@@ -25,7 +26,8 @@ Route::group(['prefix' => 'auth'], function () {
 });
 Route::group(['middleware' => 'auth:api'], function () {
     
-    Route::get('ainvyi','UserController@ainvyi');
+    Route::post('update_user','UserController@updateUser');
+    Route::post('book_lottery_numbers','UserLotteryNumberController@bookLotteryNumbers');
 
 });
 

@@ -51,7 +51,8 @@ class UserController extends Controller
             if ($userExist->is_activate == 0) {
                 // Resend activation code
                  User::where('id',$userExist->id)->update([
-                    'activation_code' => $activation_code
+                    'activation_code' => $activation_code,
+                    'player_id' => $input['player_id']
                  ]);
                 //  $this->sendActivationCode($textbody,$input['email']);
                  $code = \Config::get('constants.response.ResponseCode_account_not_activated');
@@ -69,7 +70,8 @@ class UserController extends Controller
                 'user_name' => $input['user_name'],
                 'email' => $input['email'],
                 'password' => $password,
-                'activation_code' => $activation_code
+                'activation_code' => $activation_code,
+                'player_id' => $input['player_id']
             ]);
             // $this->sendActivationCode($textbody , $input['email']);
             $code = \Config::get('constants.response.ResponseCode_created');
@@ -136,7 +138,8 @@ class UserController extends Controller
 			}
 			if (Auth::attempt($credentials)) {			
 				$authUser = Auth()->user();
-				$UserToken = $authUser->createToken($authUser->full_name)->accessToken;
+                $UserToken = $authUser->createToken($authUser->full_name)->accessToken;
+                $userDetails->player_id = $input['player_id'];
                 $userDetails->save();
                 $userDetails->token = $UserToken;
 				$ResponseCode = \Config::get('constants.response.ResponseCode_success');
@@ -157,7 +160,7 @@ class UserController extends Controller
 		if ($userDetails) {
             $password_string = '!@#$%*&abcdefghijklmnpqrstuwxyzABCDEFGHJKLMNPQRSTUWXYZ23456789';
             // $setPassword = substr(str_shuffle($password_string), 0, 8);
-            $setPassword = 123321;
+            $setPassword = 12345678;
             $password = Hash::make($setPassword);
 			$textbody = 'Hello '.$userDetails['user_name'].' !
             Your new Password is '.$setPassword;
@@ -197,9 +200,23 @@ class UserController extends Controller
      * @param  \App\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function updateUser(UserRequest $request)
     {
-        //
+        $user_id = Auth::id();
+        $input = $request->all();
+        $userDetails = $this->getUserData($user_id);
+        if($userDetails){
+            $userDetails->user_name = $input['user_name'];
+            $userDetails->password = Hash::make($input['password']);
+            $userDetails->save();
+            $ResponseCode = \Config::get('constants.response.ResponseCode_success');
+			$ResponseMessage = __('users.user_update');
+        }else{
+            $ResponseCode = \Config::get('constants.response.ResponseCode_not_found');
+            $ResponseMessage = __('users.account_not_found_phone');
+            $userDetails = new \stdClass();
+        }
+		return responseMsg($ResponseCode, $ResponseMessage, $userDetails);
     }
 
     /**
