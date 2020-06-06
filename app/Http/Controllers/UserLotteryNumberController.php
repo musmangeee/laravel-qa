@@ -36,7 +36,7 @@ class UserLotteryNumberController extends Controller
                 'user_id' => $user_id
             ]);
         }
-        $ResponseCode = \Config::get('constants.response.ResponseCode_success');
+        $ResponseCode = \Config::get('constants.response.ResponseCode_no_content');
 		$ResponseMessage = __('lottery.lottery_numbers_booked');
 		return responseMsg($ResponseCode, $ResponseMessage, $transactions);
     }
@@ -46,9 +46,18 @@ class UserLotteryNumberController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function myLotteryNumbers()
     {
-        //
+        $user_id = Auth::id();
+        $myNumbers = UserLotteryNumber::where('user_id',$user_id)->where('is_taken_out', 0)->select('id','lottery_number','created_at')->get();
+        if(count($myNumbers)>0){
+            $ResponseCode = \Config::get('constants.response.ResponseCode_success');
+		    $ResponseMessage = __('lottery.my_lottery_numbers');
+        }else{
+            $ResponseCode = \Config::get('constants.response.ResponseCode_success');
+            $ResponseMessage = __('lottery.no_lottery_numbers_booked');
+        }
+		return responseMsg($ResponseCode, $ResponseMessage, $myNumbers);
     }
 
     /**

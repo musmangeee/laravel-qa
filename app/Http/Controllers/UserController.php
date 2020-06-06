@@ -158,18 +158,45 @@ class UserController extends Controller
 		$input = $request->all();
         $userDetails = $this->getUserByEmail($input['email']);
 		if ($userDetails) {
-            $password_string = '!@#$%*&abcdefghijklmnpqrstuwxyzABCDEFGHJKLMNPQRSTUWXYZ23456789';
-            // $setPassword = substr(str_shuffle($password_string), 0, 8);
-            $setPassword = 12345678;
-            $password = Hash::make($setPassword);
+            // $password_string = '!@#$%*&abcdefghijklmnpqrstuwxyzABCDEFGHJKLMNPQRSTUWXYZ23456789';
+            // $activation_code = mt_rand(100000, 999999);
+            // $activation_code = substr(str_shuffle($password_string), 0, 8);
+            $activation_code = 123456;
+            // $activation_code = Hash::make($code);
 			$textbody = 'Hello '.$userDetails['user_name'].' !
-            Your new Password is '.$setPassword;
+            Your Activation Code is '.$activation_code;
             //  $this->sendActivationCode($textbody,$userDetails['email']);
-            $userDetails->password = $password;
+            $userDetails->activation_code = $activation_code;
 			$userDetails->save();
 
 			$ResponseCode = \Config::get('constants.response.ResponseCode_success');
-			$ResponseMessage = __('users.password_reset');
+			$ResponseMessage = __('users.activation_code_sent');
+		} 
+		else
+		{
+			$ResponseCode = \Config::get('constants.response.ResponseCode_not_found');
+			$ResponseMessage = __('users.account_not_found_email');
+			$userDetails = new \stdClass();
+		}
+		return responseMsg($ResponseCode, $ResponseMessage, $userDetails);
+    }
+    
+    public function resetPassword(UserRequest $request)
+	{
+		$input = $request->all();
+        $userDetails = $this->getUserData($input['user_id']);
+		if ($userDetails) {
+            if ($input['code'] == $userDetails->activation_code) {
+                $userDetails->password = Hash::make($input['new_password']);
+                $userDetails->save();
+                // Auth::attempt(['email' => $userDetails->email, 'password' => $userDetails->password]);
+                $userDetails->token = $userDetails->createToken($userDetails->user_name)->accessToken;
+                $ResponseCode = \Config::get('constants.response.ResponseCode_success');
+                $ResponseMessage = __('users.password_reset');
+            } else {
+                $ResponseCode = \Config::get('constants.response.ResponseCode_wrong_activationCode');
+                $ResponseMessage = __('users.enter_valid_code');
+            }
 		} 
 		else
 		{

@@ -65,32 +65,14 @@ class UserRequest extends FormRequest
 			'password' => 'required',
 		];
 	}
-	if($request->path()=='api/change_password'){
-		$rules = [
-				 // 'phone' => 'required|min:12',
-			'old_password' => 'required',
-			'new_password' => 'required|min:8|different:old_password',
-			'confirm_password' => 'required|same:new_password|min:8'
-		];
-	}
-	if($request->path()=='api/social_signup'){
-		$rules = [
-			'full_name' => 'required',
-			// 'gender'=>'required|alpha',
-			// 'phone'=>'required',
-			'email' => 'required|email',
-			'social_id' => 'required',
-			'social_access_token' => 'required'
-		];
-	}
 	if($request->path()=='api/reset_password'){
 		$rules = [
-			'reset_code' => 'required',
+			'code' => 'required|min:6',
 			'user_id' => 'required',
 			'new_password' => [
 				'required',
 				'string',
-				'min:8' 
+				// 'min:8' 
 			],
 				// 'confirm_password' => 'required|same:new_password|min:8'    
 		];
