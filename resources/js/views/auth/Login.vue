@@ -64,8 +64,8 @@ export default {
   data () {
     return {
       loginData: {
-        email: 'admin@laraspace.in',
-        password: 'admin@123',
+        email: 'shoaibt51@gmail.com',
+        password: '123456789',
         remember: ''
       }
     }
@@ -89,7 +89,7 @@ export default {
       if (!this.$v.$error) {
         Auth.login(this.loginData).then((res) => {
           if (res) {
-            this.$router.push('/admin/dashboard/basic')
+            this.$router.push('/dashboard/basic')
           }
         })
       }

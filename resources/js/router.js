@@ -69,6 +69,18 @@ import MailboxApp from './views/admin/apps/mailbox/MailboxApp.vue'
 import Users from './views/admin/users/Users.vue'
 import Profile from './views/admin/users/Profile.vue'
 
+// Lottery
+import ThisWeekLotteryNumbers from './views/admin/lottery/WeeeklyLotteryNumbers.vue'
+import LotteryWinners from './views/admin/lottery/LotteryWinners.vue'
+import LatestLotteryWinners from './views/admin/lottery/LatestLotteryWinners.vue'
+// import Profile from './views/admin/users/Profile.vue'
+
+// CMS
+import Cms from './views/admin/cms/Cms.vue'
+import EditCms from './views/admin/cms/EditCms.vue'
+import NewCms from './views/admin/cms/NewCms.vue'
+import ViewCms from './views/admin/cms/ViewCms.vue'
+
 // Settings
 import Settings from './views/admin/Settings.vue'
 
@@ -139,17 +151,50 @@ const routes = [
    |--------------------------------------------------------------------------|
    */
 
+  // {
+  //   path: '/',
+  //   component: LayoutFront,
+  //   children: [
+  //     {
+  //       path: '/',
+  //       component: Home,
+  //       name: 'home'
+  //     }
+  //   ]
+  // },
+
   {
     path: '/',
-    component: LayoutFront,
+    component: LayoutLogin,
     children: [
       {
         path: '/',
-        component: Home,
-        name: 'home'
+        component: Login,
+        name: 'login'
       }
     ]
   },
+
+
+    // Custom layouts for CMS pages
+    {
+      path: '/',
+      component: LayoutFront, // Change the desired Layout here
+      meta: { requiresAuth: false },
+      children: [
+        // {
+        //   path: 'Cms/ViewCms',
+        //   component: ViewCms
+        // },
+        {
+          path: 'cms/ViewCms/:testSlug',
+          component: ViewCms,
+          name: 'viewslug',
+          props: true
+        }
+  
+      ]
+    },
 
   /*
    |--------------------------------------------------------------------------
@@ -157,7 +202,7 @@ const routes = [
    |--------------------------------------------------------------------------|
    */
   {
-    path: '/admin',
+    path: '/',
     component: LayoutBasic, // Change the desired Layout here
     meta: { requiresAuth: true },
     children: [
@@ -321,7 +366,44 @@ const routes = [
       {
         path: 'settings',
         component: Settings
-      }
+      },
+      // Cms Pages
+      {
+        path: 'cms',
+        component: Cms
+      },
+
+      {
+        path: 'cms/add',
+        component: NewCms
+      },
+
+      {
+        path: 'cms/edit/:cmsId',
+        component: EditCms,
+        name: 'editcms',
+        props: true
+      },
+
+      // Lottery Numbers
+      {
+        path: 'lottery/thisWeek',
+        component: ThisWeekLotteryNumbers
+      },
+      {
+        path: 'lotteryWinners',
+        component: LotteryWinners
+      },
+      // {
+      //   path: 'latestLotteryWinners/:date',
+      //   component: LotteryWinners,
+      //   name: 'latestLotteryWinners',
+      // },
+      {
+        path: 'LatestLotteryWinners',
+        component: LatestLotteryWinners,
+        name: 'latestLotteryWinners',
+      },
     ]
   },
 

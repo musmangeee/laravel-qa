@@ -44,7 +44,8 @@ class UserRequest extends FormRequest
 	if($request->path()=='api/activate_account'){
 		$rules = [
 			'code' => 'required|min:6',
-			'user_id' => 'required'
+			'user_id' => 'required',
+			'player_id' => 'required',
 		];
 	}
 	if($request->path()=='api/signin'){
@@ -69,6 +70,7 @@ class UserRequest extends FormRequest
 		$rules = [
 			'code' => 'required|min:6',
 			'user_id' => 'required',
+			'player_id' => 'required',
 			'new_password' => [
 				'required',
 				'string',

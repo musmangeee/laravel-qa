@@ -1,1 +1,17 @@
 // Add Your Frontend site styles here
+.main-content.my-cms-content {
+    padding: 15px;
+}
+.table .table__actions {
+    opacity: 1 !important;
+  }
+  .badge {
+    color: white;
+    padding: 8px 12px;
+    border-radius: 13px;
+}
+.badge-light {
+    color: #212529 !important;
+    border: 2px solid #212529;
+    padding: 6px 10px !important;
+}

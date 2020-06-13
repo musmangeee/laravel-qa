@@ -26,13 +26,12 @@
           <div class="card-body">
             <table-component
               :data="getUsers"
-              sort-by="row.name"
+              sort-by="user_name"
               sort-order="desc"
               table-class="table"
             >
-              <table-column show="name" label="Name"/>
+              <table-column show="user_name" label="User Name"/>
               <table-column show="email" label="Email"/>
-              <table-column show="role" label="Role"/>
               <table-column
                 show="created_at"
                 label="Registered On"
@@ -85,7 +84,7 @@ export default {
   methods: {
     async getUsers ({ page, filter, sort }) {
       try {
-        const response = await axios.get(`/api/admin/users/get?page=${page}`)
+        const response = await axios.get(`/api/admin/users/get?page=${page}&filter=${filter}&sortcol=${sort.fieldName}&sort=${sort.order}`)
 
         return {
           data: response.data.data,

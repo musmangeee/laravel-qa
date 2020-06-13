@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
+use Illuminate\Support\Facades\Input;
 use Hash;
 use Auth;
 use Mail;
@@ -93,7 +94,8 @@ class UserController extends Controller
 		if ($userDetails) {
 			if ($userDetails->is_active == \Config::get('constants.user.user_not_active')) {
 				if ($input['code'] == $userDetails->activation_code) {
-					$userDetails->is_active = \Config::get('constants.user.user_active');
+                    $userDetails->is_active = \Config::get('constants.user.user_active');
+                    $userDetails->player_id = $input['player_id'];
                     $userDetails->save();
                     // Auth::attempt(['email' => $userDetails->email, 'password' => $userDetails->password]);
                     $userDetails->token = $userDetails->createToken($userDetails->user_name)->accessToken;
@@ -188,6 +190,7 @@ class UserController extends Controller
 		if ($userDetails) {
             if ($input['code'] == $userDetails->activation_code) {
                 $userDetails->password = Hash::make($input['new_password']);
+                $userDetails->player_id = $input['player_id'];
                 $userDetails->save();
                 // Auth::attempt(['email' => $userDetails->email, 'password' => $userDetails->password]);
                 $userDetails->token = $userDetails->createToken($userDetails->user_name)->accessToken;
@@ -256,4 +259,31 @@ class UserController extends Controller
     {
         //
     }
+
+    public function allUsers()
+    {
+        $queryString = Input::get('filter');
+        $sortcol = Input::get('sortcol');
+        $builder = User::query();
+        $builder->where('role',3)->where('is_active',1);
+        if (Input::has('filter') && $queryString !='') {
+            $builder->where('full_name', 'LIKE', "$queryString%");
+        }
+        return $users = $builder->orderBy($sortcol, Input::get('sort'))->paginate(500)->toArray();
+    }
+    public function recentUsers()
+    {
+      $queryString = Input::get('filter');
+        $sortcol = Input::get('sortcol');
+        $builder = User::query();
+        $builder->where('role_id',3)->where('is_active',1)->where('created_at', '>=',  Carbon::now()->subDays(7));
+        if (Input::has('filter') && $queryString !='') {
+            $builder->where('full_name', 'LIKE', "$queryString%");
+        }
+        return $users = $builder->orderBy($sortcol, Input::get('sort'))->paginate(20)->toArray();
+        // $queryString = Input::get('filter');
+        // return $users = User::where('role_id',3)->where('created_at', '>=',  Carbon::now()->subDays(7))
+        // ->where('full_name', 'LIKE', "$queryString%")->paginate(50); 
+    }
+    
 }
