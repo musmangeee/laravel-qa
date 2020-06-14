@@ -18,6 +18,7 @@ Route::post('signin','UserController@userSignin');
 Route::post('forgot_password','UserController@forgotPassword');
 Route::post('reset_password','UserController@resetPassword');
 Route::get('lottery_price','LotteryPriceController@lotteryPrice');
+Route::get('get_cms','CmsPageController@getCmsText');
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('login','AuthController@authenticate');

@@ -85,9 +85,9 @@ class UserRequest extends FormRequest
 	// 		'phone' => 'unique:users|min:12',
 	// 	];
 	// }
-	if($request->path()=='api/upload_profile_picture'){
+	if($request->path()=='api/get_cms'){
 		$rules = [
-			'image' => 'required',
+			'slug' => 'required',
 		];
 	}
 	if($request->path()=='api/set_player_id'){

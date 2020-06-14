@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\CmsPage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
+use App\Http\Requests\UserRequest;
 
 class CmsPageController extends Controller
 {
@@ -117,5 +118,18 @@ class CmsPageController extends Controller
     
         return $cms = CmsPage::all();
     
+    }
+    public function getCmsText(UserRequest $request) {
+        $cmsPage = CmsPage::Where('slug', $request['slug'])->pluck('page_html_content')->first();
+        if($cmsPage){
+            $plainText = strip_tags($cmsPage);
+            $ResponseCode = \Config::get('constants.response.ResponseCode_success');
+		    $ResponseMessage = __('cms.cms_page_text');
+        }else{
+            $plainText = '';
+            $ResponseCode = \Config::get('constants.response.ResponseCode_no_content');
+            $ResponseMessage = __('cms.cms_page_not_found');
+        }
+		return responseMsg($ResponseCode, $ResponseMessage, $plainText);
     }
 }

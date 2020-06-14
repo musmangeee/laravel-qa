@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\UserLotteryNumber;
 use App\UserTransaction;
 use App\LotteryWinner;
+use App\LotteryPrice;
 use Illuminate\Http\Request;
 use App\Http\Requests\LotteryRequest;
 use Auth;
@@ -38,7 +39,7 @@ class UserLotteryNumberController extends Controller
                 'user_id' => $user_id
             ]);
         }
-        $ResponseCode = \Config::get('constants.response.ResponseCode_no_content');
+        $ResponseCode = \Config::get('constants.response.ResponseCode_success');
 		$ResponseMessage = __('lottery.lottery_numbers_booked');
 		return responseMsg($ResponseCode, $ResponseMessage, $transactions);
     }
@@ -56,7 +57,7 @@ class UserLotteryNumberController extends Controller
             $ResponseCode = \Config::get('constants.response.ResponseCode_success');
 		    $ResponseMessage = __('lottery.my_lottery_numbers');
         }else{
-            $ResponseCode = \Config::get('constants.response.ResponseCode_success');
+            $ResponseCode = \Config::get('constants.response.ResponseCode_no_content');
             $ResponseMessage = __('lottery.no_lottery_numbers_booked');
         }
 		return responseMsg($ResponseCode, $ResponseMessage, $myNumbers);
@@ -180,12 +181,17 @@ class UserLotteryNumberController extends Controller
     {
         $lJackpotNumber = '';
         $lastJackpotPrize = 0;
+        $price = '';
         $nextDrawDate = Carbon::parse('next friday')->toDateString();
         $lastJackpotNumber = LotteryWinner::where('is_winner_status', 1)->with('lottery_number')->latest('created_at')->first();
         if($lastJackpotNumber){
             $date = $lastJackpotNumber['created_at']->toDateString().' 00:00:00';
             $lastJackpotPrize = LotteryWinner::where('is_winner_status', 1)->where('created_at','>=', $date)->get()->sum('total_amount');
             $lJackpotNumber = $lastJackpotNumber['lottery_number']->lottery_number;
+        }
+        $lottery_price = lotteryPrice::first();
+        if($lottery_price){
+            $price = $lottery_price->total_amount;
         }
         $lotteries = UserLotteryNumber::where('is_taken_out', 0)->with('user')->get();
         $totalEntries = count($lotteries);
@@ -195,6 +201,7 @@ class UserLotteryNumberController extends Controller
         $lotteryInfo->total_entries =  $totalEntries;
         $lotteryInfo->last_jackpot_prize =  $lastJackpotPrize;
         $lotteryInfo->account_balance =  1000;
+        $lotteryInfo->lottery_price =  $price;
         
         $ResponseCode = \Config::get('constants.response.ResponseCode_success');
         $ResponseMessage = __('lottery.no_lottery_numbers_booked');
