@@ -32,6 +32,7 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('book_lottery_numbers','UserLotteryNumberController@bookLotteryNumbers');
     Route::get('my_lottery_numbers','UserLotteryNumberController@myLotteryNumbers');
     Route::get('lottery_info','UserLotteryNumberController@getLotteryInfo');
+    Route::post('contact_us','ContactUsForumController@submitContactUs');
     
 });
 
@@ -69,6 +70,10 @@ Route::group(['prefix' => 'admin', 'middleware' => 'api.auth'], function (){
 
         Route::delete('/{id}',[
             'as' => 'admin.users.delete', 'uses' => 'UserController@destroy'
+        ]);
+
+        Route::get('/edit/{id}',[
+            'as' => 'admin.contact-us.edit', 'uses' => 'UserController@edit'
         ]);
 
     });
@@ -119,6 +124,21 @@ Route::group(['prefix' => 'admin', 'middleware' => 'api.auth'], function (){
         // Route::get('/slugGet/get/{testSlug}',[
         //     'as' => 'admin.cms', 'uses' => 'CmsPageController@getPageSlug'
         // ]);
+
+    });
+    Route::group(['prefix' => 'contact-us'], function (){
+
+        Route::get('/get',[
+            'as' => 'admin.contact-us', 'uses' => 'ContactUsForumController@getContactUsData'
+        ]);
+
+        Route::get('/edit/{id}',[
+            'as' => 'admin.contact-us.edit', 'uses' => 'ContactUsForumController@edit'
+        ]);
+
+        Route::post('/reply',[
+            'as' => 'admin.contact-us.edit', 'uses' => 'ContactUsForumController@reply'
+        ]);
 
     });
 

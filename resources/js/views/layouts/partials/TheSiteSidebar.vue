@@ -231,18 +231,22 @@
             </router-link>
           </v-collapse-item> -->
 
-          <v-collapse-item active-url="/users">
+          <!-- <v-collapse-item active-url="/users">
             <a slot="item-title" href="#">
               <i class="icon-fa icon-fa-user"/>Users
               <span class="icon-fa arrow icon-fa-fw"/>
             </a>
 
-            <router-link to="/users/profile">
-              Profile
-            </router-link>
-
             <router-link to="/users/all">
               All Users
+            </router-link>
+          </v-collapse-item> -->
+
+          <v-collapse-item active-url="/users/all">
+            <router-link
+              slot="item-title"
+              to="/users/all">
+              <i class="icon-fa icon-fa-user"/>All Users
             </router-link>
           </v-collapse-item>
 
@@ -271,6 +275,14 @@
               slot="item-title"
               to="/cms">
               <i class="icon-fa icon-fa-clipboard"/>CMS
+            </router-link>
+          </v-collapse-item>
+
+          <v-collapse-item active-url="/contact-us">
+            <router-link
+              slot="item-title"
+              to="/contact-us">
+              <i class="icon-fa icon-fa-envelope"/>Contact Us
             </router-link>
           </v-collapse-item>
 

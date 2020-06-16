@@ -6,6 +6,7 @@ use App\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\Input;
+use App\UserWallet;
 use Hash;
 use Auth;
 use Mail;
@@ -73,6 +74,9 @@ class UserController extends Controller
                 'password' => $password,
                 'activation_code' => $activation_code,
                 'player_id' => $input['player_id']
+            ]);
+            $UserWallet = UserWallet::firstOrCreate([
+                'user_id' => $User->id
             ]);
             // $this->sendActivationCode($textbody , $input['email']);
             $code = \Config::get('constants.response.ResponseCode_created');
@@ -270,6 +274,16 @@ class UserController extends Controller
             $builder->where('full_name', 'LIKE', "$queryString%");
         }
         return $users = $builder->orderBy($sortcol, Input::get('sort'))->paginate(500)->toArray();
+    }
+    public function edit($id)
+    {
+        $win_amount = 0;
+        $user = User::where('id',$id)->with('lottery_numbers','winning_numbers.lottery_number','user_wallet')->first();
+        foreach($user['winning_numbers'] as $win){
+            $win_amount += $win['total_amount'];
+        }
+        $user['winning_amount'] = $win_amount;
+        return $user;
     }
     public function recentUsers()
     {

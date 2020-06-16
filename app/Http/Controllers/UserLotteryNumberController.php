@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\LotteryRequest;
 use Auth;
 use Carbon\Carbon;
+use App\UserWallet;
 
 class UserLotteryNumberController extends Controller
 {
@@ -96,7 +97,13 @@ class UserLotteryNumberController extends Controller
 
     public function getLotteryWinners(Request $req)
     {
-        $totalRevenue = 10000;
+        $totalRevenue = 0;
+        $remwinners = UserLotteryNumber::where('is_taken_out', 0)->get();
+        if($remwinners){
+            $lotteryStartDate = $remwinners[0]->created_at->toDateTimeString();
+            $totalRevenue =  UserTransaction::where('created_at','>=',$lotteryStartDate)->sum('total_amount');
+        }
+        
         $totalLotteryPrize = 0.6 * $totalRevenue;
         $totalJackPotPrize = 0.6 * $totalLotteryPrize;
         $fiveNumberPrize = 0.035 * $totalLotteryPrize;
@@ -121,7 +128,6 @@ class UserLotteryNumberController extends Controller
         //         'total_amount' => $jackpotPrize
         //     ]);
         // }
-        $remwinners = UserLotteryNumber::where('is_taken_out', 0)->get();
         $winner_number = explode(",",$req['jackpot']);
         foreach($remwinners as $key=>$winner){
             $compare = explode(",",$winner['lottery_number']);
@@ -162,6 +168,7 @@ class UserLotteryNumberController extends Controller
                 'is_winner_status' => $status,
                 'total_amount' => $prize_amount
             ]);
+            $userWallet =  UserWallet::where('user_id',$rem->user_id)->increment('available_balance',$prize_amount);
         }
 
         // $length = count($myNumbers);
@@ -182,6 +189,7 @@ class UserLotteryNumberController extends Controller
         $lJackpotNumber = '';
         $lastJackpotPrize = 0;
         $price = '';
+        $avaiableBalance = 0;
         $nextDrawDate = Carbon::parse('next friday')->toDateString();
         $lastJackpotNumber = LotteryWinner::where('is_winner_status', 1)->with('lottery_number')->latest('created_at')->first();
         if($lastJackpotNumber){
@@ -193,14 +201,18 @@ class UserLotteryNumberController extends Controller
         if($lottery_price){
             $price = $lottery_price->total_amount;
         }
+        $userWallet =  UserWallet::where('user_id',Auth::id())->first();
+        if($userWallet){
+            $avaiableBalance = $userWallet->available_balance;
+        }
         $lotteries = UserLotteryNumber::where('is_taken_out', 0)->with('user')->get();
         $totalEntries = count($lotteries);
         $lotteryInfo = new \stdClass();
         $lotteryInfo->last_jackpot_number =  $lJackpotNumber;
         $lotteryInfo->next_draw_date =  $nextDrawDate;
         $lotteryInfo->total_entries =  $totalEntries;
-        $lotteryInfo->last_jackpot_prize =  $lastJackpotPrize;
-        $lotteryInfo->account_balance =  1000;
+        $lotteryInfo->last_jackpot_prize =  round($lastJackpotPrize);
+        $lotteryInfo->account_balance =  $avaiableBalance;
         $lotteryInfo->lottery_price =  $price;
         
         $ResponseCode = \Config::get('constants.response.ResponseCode_success');

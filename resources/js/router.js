@@ -81,6 +81,10 @@ import EditCms from './views/admin/cms/EditCms.vue'
 import NewCms from './views/admin/cms/NewCms.vue'
 import ViewCms from './views/admin/cms/ViewCms.vue'
 
+// Contact Us
+import ContactUs from './views/admin/contact-us/ContactUs.vue'
+import EmailReply from './views/admin/contact-us/EmailReply.vue'
+
 // Settings
 import Settings from './views/admin/Settings.vue'
 
@@ -344,8 +348,10 @@ const routes = [
 
       // Users
       {
-        path: 'users/profile',
-        component: Profile
+        path: 'users/profile/:userId',
+        component: Profile,
+        name: 'userprofile',
+        props: true
       },
       {
         path: 'users/all',
@@ -403,6 +409,18 @@ const routes = [
         path: 'LatestLotteryWinners',
         component: LatestLotteryWinners,
         name: 'latestLotteryWinners',
+      },
+
+      // Contact Us
+      {
+        path: 'contact-us',
+        component: ContactUs
+      },
+      {
+        path: 'contact-us/reply/:contactId',
+        component: EmailReply,
+        name: 'EmailReply',
+        props: true
       },
     ]
   },

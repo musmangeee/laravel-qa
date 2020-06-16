@@ -7,14 +7,14 @@
         <li class="breadcrumb-item"><a href="#">Users</a></li>
         <li class="breadcrumb-item active">Users</li>
       </ol>
-      <div class="page-actions">
+      <!-- <div class="page-actions">
         <a href="#" class="btn btn-primary">
           <i class="icon-fa icon-fa-plus"/> New User
         </a>
         <button class="btn btn-danger">
           <i class="icon-fa icon-fa-trash"/> Delete
         </button>
-      </div>
+      </div> -->
     </div>
     <div class="row">
       <div class="col-sm-12">
@@ -44,9 +44,14 @@
               >
                 <template slot-scope="row">
                   <div class="table__actions">
-                    <router-link to="/admin/users/profile">
+                    <!-- <router-link to="/users/profile">
                       <a class="btn btn-default btn-sm">
                         <i class="icon-fa icon-fa-search"/> View
+                      </a>
+                    </router-link> -->
+                    <router-link :to="{ name: 'userprofile', params: { userId: row.id }}">
+                      <a class="btn btn-default btn-sm">
+                        <i class="icon-fa icon-fa-eye"/> View
                       </a>
                     </router-link>
                     <a

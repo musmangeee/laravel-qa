@@ -15,3 +15,26 @@
     border: 2px solid #212529;
     padding: 6px 10px !important;
 }
+.login-page .login-wrapper {
+    background: linear-gradient(to bottom right, #2d4203, #3bff00);
+}
+.site-header {
+    background-color: #2f9315;
+    padding: 8px 15px;
+}
+.brand-main img {
+    height: 46px;
+    padding-top: 0px;
+}
+span.brand-name {
+    font-size: 25px;
+    color: yellow;
+    position: absolute;
+    top: 12px;
+    padding: 0px 5px;
+    /* margin: 15px 0px; */
+    /* top: 7px; */
+}
+.sidebar-left {
+    background: #071501;
+}

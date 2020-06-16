@@ -3,10 +3,11 @@
     <a href="#" class="brand-main">
       <img
         id="logo-desk"
-        src="/assets/img/logo-desk.png"
+        src="/assets/img/logo-mobile.png"
         alt="Laraspace Logo"
         class="d-none d-md-inline"
       >
+      <span class="brand-name">MONIGALAXY</span>
       <img
         id="logo-mobile"
         src="/assets/img/logo-mobile.png"
