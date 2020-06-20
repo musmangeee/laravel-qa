@@ -63,7 +63,6 @@ class UserRequest extends FormRequest
 	if($request->path()=='api/update_user'){
 		$rules = [
 			'user_name' => 'required',
-			'password' => 'required',
 		];
 	}
 	if($request->path()=='api/reset_password'){
@@ -79,6 +78,12 @@ class UserRequest extends FormRequest
 				// 'confirm_password' => 'required|same:new_password|min:8'    
 		];
 	}
+	if($request->path()=='api/change_password'){
+		$rules = [
+			'old_password' => 'required',
+			'new_password' => 'required',
+		];
+	}
 	// if($request->path()=='api/edit_profile'){
 	// 	$rules = [
 	// 		'email' => 'email|unique:users',
@@ -88,6 +93,11 @@ class UserRequest extends FormRequest
 	if($request->path()=='api/get_cms'){
 		$rules = [
 			'slug' => 'required',
+		];
+	}
+	if($request->path()=='api/withdraw_request'){
+		$rules = [
+			'withdraw_amount' => 'required',
 		];
 	}
 	if($request->path()=='api/set_player_id'){

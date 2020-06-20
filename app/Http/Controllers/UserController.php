@@ -241,10 +241,34 @@ class UserController extends Controller
         $userDetails = $this->getUserData($user_id);
         if($userDetails){
             $userDetails->user_name = $input['user_name'];
-            $userDetails->password = Hash::make($input['password']);
+            // $userDetails->password = Hash::make($input['password']);
             $userDetails->save();
             $ResponseCode = \Config::get('constants.response.ResponseCode_success');
 			$ResponseMessage = __('users.user_update');
+        }else{
+            $ResponseCode = \Config::get('constants.response.ResponseCode_not_found');
+            $ResponseMessage = __('users.account_not_found_phone');
+            $userDetails = new \stdClass();
+        }
+		return responseMsg($ResponseCode, $ResponseMessage, $userDetails);
+    }
+
+    public function changePassword(UserRequest $request)
+    {
+        $user_id = Auth::id();
+        $input = $request->all();
+        $userDetails = $this->getUserData($user_id);
+        if($userDetails){
+            // $userDetails->password = Hash::make($input['password']);
+            if (Hash::check($input['old_password'], $userDetails->password)) {
+                $userDetails->password = Hash::make($input['new_password']);
+                $userDetails->save();
+                $ResponseCode = \Config::get('constants.response.ResponseCode_success');
+                $ResponseMessage = __('users.password_change');
+            }else{
+                $ResponseCode = \Config::get('constants.response.ResponseCode_fail');
+                $ResponseMessage = __('users.old_password_mismatch');
+            }
         }else{
             $ResponseCode = \Config::get('constants.response.ResponseCode_not_found');
             $ResponseMessage = __('users.account_not_found_phone');
@@ -273,7 +297,7 @@ class UserController extends Controller
         if (Input::has('filter') && $queryString !='') {
             $builder->where('full_name', 'LIKE', "$queryString%");
         }
-        return $users = $builder->orderBy($sortcol, Input::get('sort'))->paginate(500)->toArray();
+        return $users = $builder->orderBy($sortcol, Input::get('sort'))->paginate(50)->toArray();
     }
     public function edit($id)
     {

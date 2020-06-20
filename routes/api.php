@@ -29,10 +29,12 @@ Route::group(['prefix' => 'auth'], function () {
 Route::group(['middleware' => 'auth:api'], function () {
     
     Route::post('update_user','UserController@updateUser');
+    Route::post('change_password','UserController@changePassword');
     Route::post('book_lottery_numbers','UserLotteryNumberController@bookLotteryNumbers');
     Route::get('my_lottery_numbers','UserLotteryNumberController@myLotteryNumbers');
     Route::get('lottery_info','UserLotteryNumberController@getLotteryInfo');
     Route::post('contact_us','ContactUsForumController@submitContactUs');
+    Route::post('withdraw_request','WithdrawRequestController@userWithdrawRequest');
     
 });
 
@@ -138,6 +140,21 @@ Route::group(['prefix' => 'admin', 'middleware' => 'api.auth'], function (){
 
         Route::post('/reply',[
             'as' => 'admin.contact-us.edit', 'uses' => 'ContactUsForumController@reply'
+        ]);
+
+    });
+    Route::group(['prefix' => 'withdraw-requests'], function (){
+
+        Route::get('/get',[
+            'as' => 'admin.withdraw-requests', 'uses' => 'WithdrawRequestController@getWithdrawRequestData'
+        ]);
+
+        Route::get('/edit/{id}',[
+            'as' => 'admin.withdraw-requests.edit', 'uses' => 'WithdrawRequestController@getUserWalletDetails'
+        ]);
+
+        Route::post('/proceed',[
+            'as' => 'admin.withdraw-requests.edit', 'uses' => 'WithdrawRequestController@proceedWithdraw'
         ]);
 
     });

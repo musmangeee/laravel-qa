@@ -270,6 +270,14 @@
             </router-link> -->
           </v-collapse-item>
 
+          <v-collapse-item active-url="/withdraw-requests">
+            <router-link
+              slot="item-title"
+              to="/withdraw-requests">
+              <i class="icon-fa icon-fa-paper-plane"/>Withdraw Requests
+            </router-link>
+          </v-collapse-item>
+
           <v-collapse-item active-url="/cms">
             <router-link
               slot="item-title"

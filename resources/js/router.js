@@ -82,8 +82,13 @@ import NewCms from './views/admin/cms/NewCms.vue'
 import ViewCms from './views/admin/cms/ViewCms.vue'
 
 // Contact Us
-import ContactUs from './views/admin/contact-us/ContactUs.vue'
+import
+ContactUs from './views/admin/contact-us/ContactUs.vue'
 import EmailReply from './views/admin/contact-us/EmailReply.vue'
+
+// Contact Us
+import WithdrawRequest from './views/admin/withdraw-requests/WithdrawRequest.vue'
+import UserWallet from './views/admin/withdraw-requests/UserWallet.vue'
 
 // Settings
 import Settings from './views/admin/Settings.vue'
@@ -420,6 +425,18 @@ const routes = [
         path: 'contact-us/reply/:contactId',
         component: EmailReply,
         name: 'EmailReply',
+        props: true
+      },
+      
+      // Withdraw Requests
+      {
+        path: 'withdraw-requests',
+        component: WithdrawRequest
+      },
+      {
+        path: 'withdraw-requests/user-wallet/:withdrawId',
+        component: UserWallet,
+        name: 'UserWallet',
         props: true
       },
     ]

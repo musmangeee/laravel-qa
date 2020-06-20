@@ -15,10 +15,10 @@ class CreateUserTransactionsTable extends Migration
     {
         Schema::create('user_transactions', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('transaction_id');
+            $table->string('transaction_id');
             $table->string('ref_id');
             $table->integer('user_id');
-            $table->string('total_amount');
+            $table->float('total_amount');
             $table->softDeletes();
             $table->timestamps();
         });

@@ -9,7 +9,7 @@
         <li class="breadcrumb-item">
           <a href="#">Users</a>
         </li>
-        <li class="breadcrumb-item active">Jane Doe</li>
+        <li class="breadcrumb-item active">{{username}}</li>
       </ol>
     </div>
     <div class="row">

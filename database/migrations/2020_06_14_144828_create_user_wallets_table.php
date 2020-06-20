@@ -16,6 +16,7 @@ class CreateUserWalletsTable extends Migration
         Schema::create('user_wallets', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id');
+            $table->float('total_balance')->default(0);
             $table->float('available_balance')->default(0);
             $table->softDeletes();
             $table->timestamps();

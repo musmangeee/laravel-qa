@@ -168,7 +168,7 @@ class UserLotteryNumberController extends Controller
                 'is_winner_status' => $status,
                 'total_amount' => $prize_amount
             ]);
-            $userWallet =  UserWallet::where('user_id',$rem->user_id)->increment('available_balance',$prize_amount);
+            $userWallet =  UserWallet::where('user_id',$rem->user_id)->increment('available_balance',$prize_amount)->increment('total_balance',$prize_amount);
         }
 
         // $length = count($myNumbers);
